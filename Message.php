@@ -58,9 +58,10 @@ class Message
     public function __construct(array $options = array())
     {
         if (isset($options['queue'])) {
-            if ($options['queue'] instanceof Queue) {
+            //if ($options['queue'] instanceof Queue) {
                 $this->_queue      = $options['queue'];
                 $this->_queueClass = get_class($this->_queue);
+/*
             } else {
                 $result = gettype($options['queue']);
                 if ($result === 'object') {
@@ -71,6 +72,7 @@ class Message
                     '$options[\'queue\'] = ' . $result . ': must be instanceof \ZendQueue\Queue'
                 );
             }
+*/
         }
         if (isset($options['data'])) {
             if (!is_array($options['data'])) {
