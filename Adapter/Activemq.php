@@ -175,12 +175,13 @@ class Activemq extends AbstractAdapter
      * @param  \ZendQueue\Queue $queue
      * @return void
      */
-    protected function subscribe(Queue $queue)
+    protected function subscribe(Queue $queue,array $subscribe_headers = [])
     {
         $frame = $this->_client->createFrame();
         $frame->setCommand('SUBSCRIBE');
-        $frame->setHeader('destination', $queue->getName());
-        $frame->setHeader('ack','client');
+        $subscribe_headers['destination'] = $queue->getName();
+        $subscribe_headers['ack']         = 'client';
+        $frame->setHeaders($subscribe_headers);
         $this->_client->send($frame);
         $this->_subscribed[$queue->getName()] = TRUE;
     }
@@ -189,11 +190,11 @@ class Activemq extends AbstractAdapter
      * Return the first element in the queue
      *
      * @param  \Closure   $frame_handler
-     * @param  integer    $maxMessages
-     * @param  integer    $timeout
+     * @param  ?integer    $maxMessages
+     * @param  ?integer    $timeout
      * @return array of raw messages
      */
-    public function receive(\Closure $frame_handler,$maxMessages=null, $timeout=null)
+    public function receive(\Closure $frame_handler,?int $maxMessages=null, ?int $timeout=null,array $subscribe_headers =[]):array
     {
         if ($maxMessages === null) {
             $maxMessages = 100;
@@ -207,7 +208,7 @@ class Activemq extends AbstractAdapter
 
         // signal that we are reading
         if(!$this->isSubscribed($this->_queue)) {
-            $this->subscribe($this->_queue);
+            $this->subscribe($this->_queue,$subscribe_headers);
         }
         if ($maxMessages > 0) {
             if ($this->_client->canRead()) {

@@ -404,9 +404,9 @@ class Queue implements Countable
      * @param  integer $timeout
      * @return \ZendQueue\Message\MessageIterator
      */
-    public function receive(\Closure $frame_handler,$maxMessages=1, $timeout=20)
+    public function receive(\Closure $frame_handler,$maxMessages=1, $timeout=20,array $subscribe_headers=[])
     {
-        return $this->getAdapter()->receive($frame_handler,$maxMessages, $timeout);
+        return $this->getAdapter()->receive($frame_handler,$maxMessages, $timeout, $subscribe_headers);
     }
 
     /**
